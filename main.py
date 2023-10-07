@@ -1,5 +1,6 @@
 import random
 from time import sleep
+import os
 
 wallet = 1
 bank = 0
@@ -8,6 +9,39 @@ backpack = []
 
 crime_controler = 0
 work_controler = 0
+
+save_file_name = "game_save.py"
+
+def save_game():
+    global wallet, bank, backpack, crime_controler, work_controler
+
+    game_state = {
+        "wallet": wallet,
+        "bank": bank,
+        "crime_controler": crime_controler,
+        "work_controler": work_controler,
+        "backpack": backpack,
+    }
+
+    with open(save_file_name, "w") as save_file:
+        save_file.write(str(game_state))
+        print("Game saved.")
+    question()
+
+def load_game():
+    global wallet, bank, backpack, crime_controler, work_controler
+    try:
+        with open(save_file_name, "r") as save_file:
+            game_state = eval(save_file.read())
+            wallet = game_state["wallet"]
+            bank = game_state["bank"]
+            work_controler = game_state["work_controler"]
+            crime_controler = game_state["crime_controler"]
+            backpack = game_state["backpack"]
+        print("Game loaded.")
+    except FileNotFoundError:
+        print("No save file found.")
+    question()
 
 #shop commands
 pc1 = 3000
@@ -121,6 +155,7 @@ def dep():
 
   money = int(input("dep-command # "))
 
+
   wallet = wallet - money
   bank = bank + money
 
@@ -131,6 +166,7 @@ def withdraw():
   global bank
 
   cost = int(input('withdraw-command # '))
+
 
   bank = bank - cost
   wallet = wallet + cost
@@ -170,6 +206,34 @@ def roulette():
     print("You do not have enought money")
     question()
 
+def help():
+   print("Command list")
+   print("work")
+   print("crime")
+   print("roulette [WARNING: first type cost then type color!]")
+   print("dep")
+   print('withdraw')
+   print('bal')
+   print('help')
+   print('shop')
+   print('buy')
+   print('showb')
+   print('clear')
+   print("save")
+
+   print(' ')
+
+   question()
+
+def save():
+    data = open('Data.py', 'w')
+    data.write('wallet = ' + str(wallet) + '\n')
+    data.write('bank = ' + str(bank) + '\n')
+
+    data.close
+
+    question()
+
 def question():
     global work_controler
     global crime_controler
@@ -195,7 +259,7 @@ def question():
         shop()
     elif command == 'buy':
       buy()
-    elif command == 'showbg':
+    elif command == 'showb':
       showbg()
     elif command == 'dep':
       dep()
@@ -203,8 +267,17 @@ def question():
       withdraw()
     elif command == 'roulette':
       roulette()
+    elif command == 'clear':
+       os.system('cls')
+    elif command == 'help':
+       help()
+    elif command == 'save':
+       save_game()
+    elif command == 'load':
+      load_game()
     else:
        print('This command does not exist')
        question()
 
+load_game()
 question()
